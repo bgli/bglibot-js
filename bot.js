@@ -76,7 +76,6 @@ var handleGroupText = (ctx) => {
     case "!members":
       ctx.getChatMembersCount()
         .then((data)=>{
-          console.log(data)
           ctx.reply(`Jumlah Anggota: ${data}`)
         })
       
@@ -88,4 +87,4 @@ var handleGroupText = (ctx) => {
   }
 }
 
-exports.instance = bot
+module.exports = bot
