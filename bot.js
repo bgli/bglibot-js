@@ -94,8 +94,6 @@ var handleGroupText = (ctx) => {
       break
       
     default:
-      // Lempar ke AI
-      // handleWit(ctx)
       break;
       
   }
