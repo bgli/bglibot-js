@@ -2,15 +2,14 @@ const Telegraf = require('telegraf')
 
 const bot = new Telegraf(process.env.TOKEN)
 
-bot.telegram.setWebhook('https://aliando.gomix.me/telegram-webhook')
+bot.telegram.setWebhook('https://aliando.gomix.me/webhook')
 
-bot.startWebhook('/telegram-webhook',null,3000)
+//bot.startWebhook('/telegram-webhook',null,3000)
 
 
 // Handle Message
 bot.on('message', (ctx) => {
   
-  console.log(ctx.updateSubType)
   
   if(ctx.updateType == 'message'){
     
@@ -40,7 +39,7 @@ bot.on('message', (ctx) => {
 
 // Handle Text Message
 var handleTextMessage = (ctx) => {
-  //console.log(ctx.update)
+  console.log(`${ctx.message.chat.title} : @ ${ctx.from.first_name} => ${ctx.message.text}`)
   
   if(ctx.chat.type == 'group' || ctx.chat.type == 'supergroup'){
     handleGroupText(ctx)
@@ -88,3 +87,5 @@ var handleGroupText = (ctx) => {
       
   }
 }
+
+exports.instance = bot
