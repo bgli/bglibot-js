@@ -1,9 +1,9 @@
 var express = require('express')
-var telegram = require('./telegram')
+var telegraf = require('./bot')
 var parser = require('body-parser')
 var app = express()
 
-const bot = telegram.bot
+const bot = telegraf.instance
 
 app.use(express.static('public'))
 app.use(parser.json())
@@ -16,9 +16,8 @@ app.post('/webhook', (request, response) => {
     
     let body = request.body
 
-    bot.handleUpdate(body)
+    bot.handleUpdate(body, response.sendStatus(200))
 
-    response.sendStatus(200)
 })
 
 

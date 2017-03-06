@@ -89,4 +89,4 @@ var handleGroupText = (ctx) => {
   }
 }
 
-exports.bot = bot
+exports.instance = bot
