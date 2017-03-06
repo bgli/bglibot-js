@@ -10,7 +10,6 @@ bot.telegram.setWebhook('https://aliando.gomix.me/webhook')
 // Handle Message
 bot.on('message', (ctx) => {
   
-  console.log(ctx.updateSubType)
   
   if(ctx.updateType == 'message'){
     
@@ -40,7 +39,7 @@ bot.on('message', (ctx) => {
 
 // Handle Text Message
 var handleTextMessage = (ctx) => {
-  //console.log(ctx.update)
+  console.log(`${ctx.message.chat.title} : @ ${ctx.from.first_name} => ${ctx.message.text}`)
   
   if(ctx.chat.type == 'group' || ctx.chat.type == 'supergroup'){
     handleGroupText(ctx)
