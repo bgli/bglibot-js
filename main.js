@@ -1,9 +1,8 @@
 var express = require('express')
-var telegraf = require('./bot')
+var bot = require('./bot')
 var parser = require('body-parser')
 var app = express()
 
-const bot = telegraf.instance
 
 app.use(express.static('public'))
 app.use(parser.json())
