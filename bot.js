@@ -1,5 +1,7 @@
 const Telegraf = require('telegraf')
+const TelegrafWit = require('telegraf-wit')
 
+const wit = new TelegrafWit(process.env.WIT_TOKEN)
 const bot = new Telegraf(process.env.TOKEN)
 
 bot.telegram.setWebhook('https://aliando.gomix.me/webhook')
@@ -83,9 +85,25 @@ var handleGroupText = (ctx) => {
       break
       
     default:
+      // Lempar ke AI
+      handleWit(ctx)
       break;
       
   }
 }
+
+var handleWit = (ctx) => {
+  return wit.meaning(ctx.message.text)
+    .then((result) => {
+      var witResult = JSON.stringify(result, null, 2)
+      console.log(witResult)
+      ctx.telegram.sendMessage(-1001085483555,witResult)
+    })
+}
+
+
+wit.on('error', (ctx) => {
+  console.error('wit error', err)
+})
 
 module.exports = bot
