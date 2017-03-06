@@ -6,13 +6,21 @@ const bot = new Telegraf(process.env.TOKEN)
 
 bot.telegram.setWebhook('https://aliando.gomix.me/webhook')
 
+// Session for storing story context
+bot.use(Telegraf.memorySession())
+
+// Add wit conversation middleware
+bot.use(wit.middleware())
+
+
 //bot.startWebhook('/telegram-webhook',null,3000)
 
 
 // Handle Message
-bot.on('message', (ctx) => {
+wit.on('message', (ctx) => {
   
-  
+  console.log(ctx.wit.message)
+
   if(ctx.updateType == 'message'){
     
     let subType = ctx.updateSubType
@@ -45,6 +53,8 @@ var handleTextMessage = (ctx) => {
   
   if(ctx.chat.type == 'group' || ctx.chat.type == 'supergroup'){
     handleGroupText(ctx)
+  }else if(ctx.chat.type == "private"){
+    ctx.reply(ctx.wit.message)
   }
 
 }
@@ -78,7 +88,6 @@ var handleGroupText = (ctx) => {
     case "!members":
       ctx.getChatMembersCount()
         .then((data)=>{
-          console.log(data)
           ctx.reply(`Jumlah Anggota: ${data}`)
         })
       
@@ -86,21 +95,11 @@ var handleGroupText = (ctx) => {
       
     default:
       // Lempar ke AI
-      handleWit(ctx)
+      // handleWit(ctx)
       break;
       
   }
 }
-
-var handleWit = (ctx) => {
-  return wit.meaning(ctx.message.text)
-    .then((result) => {
-      var witResult = JSON.stringify(result, null, 2)
-      console.log(witResult)
-      ctx.telegram.sendMessage(-1001085483555,witResult)
-    })
-}
-
 
 wit.on('error', (ctx) => {
   console.error('wit error', err)
