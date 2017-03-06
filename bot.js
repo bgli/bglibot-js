@@ -1,13 +1,8 @@
 const Telegraf = require('telegraf')
-const TelegrafWit = require('telegraf-wit')
 
-const wit = new TelegrafWit(process.env.WIT_TOKEN)
 const bot = new Telegraf(process.env.TOKEN)
 
 bot.telegram.setWebhook('https://aliando.gomix.me/webhook')
-
-// Session for storing story context
-bot.use(Telegraf.memorySession())
 
 
 // Handle Message
@@ -19,12 +14,15 @@ bot.on('message', (ctx) => {
     let subType = ctx.updateSubType
     
     switch (ctx.updateSubType) {
+        
       case 'text':
         handleTextMessage(ctx)
         break
+        
       case 'new_chat_member':
         handleGreetings(ctx)
         break
+        
       case 'left_chat_member':
         console.log(ctx)
         break  
@@ -42,30 +40,39 @@ bot.on('message', (ctx) => {
 
 // Handle Text Message
 var handleTextMessage = (ctx) => {
+  
   console.log(`${ctx.message.chat.title} : @ ${ctx.from.first_name} => ${ctx.message.text}`)
   
   if(ctx.chat.type == 'group' || ctx.chat.type == 'supergroup'){
+    
     handleGroupText(ctx)
+    
   }else if(ctx.chat.type == "private"){
+    
     // TODO: Handle private message
+    console.log('private message')
+    
   }
 
 }
 
 // Handle Greetings 
 var handleGreetings = (ctx) => {
+  
   let member = ctx.message.new_chat_member
   let group  = ctx.chat
     
   let greetings = `Halo <b>${member.first_name}</b>!\n\nSelamat datang  di Group <b>${group.title}</b>`
     
-  ctx.replyWithHTML(greetings);
+  ctx.replyWithHTML(greetings)
+  
 }
 
 
 // Command
 var handleGroupText = (ctx) => {
-  let message = ctx.update.message.text
+  
+  let message = ctx.message.text
   
   switch (message) {
     case "!rules":
@@ -79,6 +86,7 @@ var handleGroupText = (ctx) => {
       break
       
     case "!members":
+    
       ctx.getChatMembersCount()
         .then((data)=>{
           ctx.reply(`Jumlah Anggota: ${data}`)
@@ -90,10 +98,8 @@ var handleGroupText = (ctx) => {
       break;
       
   }
+  
 }
 
-wit.on('error', (ctx) => {
-  console.error('wit error')
-})
 
 module.exports = bot
