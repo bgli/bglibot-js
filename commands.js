@@ -40,7 +40,7 @@ var commands = {
 
         } else if (ctx.chat.type == "private") {
 
-            commands.handlePrivate(ctx)
+            this.handlePrivate(ctx)
 
         }
 
