@@ -9,17 +9,10 @@ bot.telegram.setWebhook('https://aliando.gomix.me/webhook')
 // Session for storing story context
 bot.use(Telegraf.memorySession())
 
-// Add wit conversation middleware
-bot.use(wit.middleware())
-
-
-//bot.startWebhook('/telegram-webhook',null,3000)
-
 
 // Handle Message
-wit.on('message', (ctx) => {
+bot.on('message', (ctx) => {
   
-  console.log(ctx.wit.message)
 
   if(ctx.updateType == 'message'){
     
@@ -54,7 +47,7 @@ var handleTextMessage = (ctx) => {
   if(ctx.chat.type == 'group' || ctx.chat.type == 'supergroup'){
     handleGroupText(ctx)
   }else if(ctx.chat.type == "private"){
-    ctx.reply(ctx.wit.message)
+    // TODO: Handle private message
   }
 
 }
@@ -100,7 +93,7 @@ var handleGroupText = (ctx) => {
 }
 
 wit.on('error', (ctx) => {
-  console.error('wit error', err)
+  console.error('wit error')
 })
 
 module.exports = bot
