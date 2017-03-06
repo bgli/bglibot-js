@@ -2,9 +2,9 @@ const Telegraf = require('telegraf')
 
 const bot = new Telegraf(process.env.TOKEN)
 
-bot.telegram.setWebhook('https://aliando.gomix.me/telegram-webhook')
+bot.telegram.setWebhook('https://aliando.gomix.me/webhook')
 
-bot.startWebhook('/telegram-webhook',null,3000)
+//bot.startWebhook('/telegram-webhook',null,3000)
 
 
 // Handle Message
@@ -88,3 +88,5 @@ var handleGroupText = (ctx) => {
       
   }
 }
+
+exports.bot = bot
