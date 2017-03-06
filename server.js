@@ -7,39 +7,57 @@ bot.telegram.setWebhook('https://aliando.gomix.me/telegram-webhook')
 bot.startWebhook('/telegram-webhook',null,3000)
 
 
-// Handle on Text Message
-bot.on('text', (ctx) => {
-  console.log(ctx.update)
-  
-  if(ctx.update.message.chat.type == 'group' || ctx.update.message.chat.type == 'supergroup'){
-    handleGroupText(ctx)
-  }
-  
-
-})
-
 // Handle Message
 bot.on('message', (ctx) => {
-  console.log(ctx.update)
   
-  // Wellcome Message
-  if(ctx.update.message.new_chat_member != null){
-    let member = ctx.update.message.new_chat_member
-    let group  = ctx.update.message.chat
+  console.log(ctx.updateSubType)
+  
+  if(ctx.updateType == 'message'){
     
-    let greetings = 'Halo <b>'+member.first_name+'</b> (@'+member.username+')\n\nSelamat datang  di Group <b>'+group.title+'</b>\n👋'
+    let subType = ctx.updateSubType
     
-    ctx.replyWithHTML(greetings);
+    switch (ctx.updateSubType) {
+      case 'text':
+        handleTextMessage(ctx)
+        break
+      case 'new_chat_member':
+        handleGreetings(ctx)
+        break
+      case 'left_chat_member':
+        console.log(ctx)
+        break  
+        
+    }
+    
+  }else if(ctx.updateType == 'inline_query'){
+    
+    // TODO: Inline query
+    
   }
   
 })
 
 
-// Handle Sticker Message
-bot.on('sticker', (ctx) => {
-  console.log(ctx)
-  ctx.reply('I love sticker too')
-})
+// Handle Text Message
+var handleTextMessage = (ctx) => {
+  //console.log(ctx.update)
+  
+  if(ctx.chat.type == 'group' || ctx.chat.type == 'supergroup'){
+    handleGroupText(ctx)
+  }
+
+}
+
+// Handle Greetings 
+var handleGreetings = (ctx) => {
+  let member = ctx.message.new_chat_member
+  let group  = ctx.chat
+    
+  let greetings = `Halo <b>${member.first_name}</b>!\n\nSelamat datang  di Group <b>${group.title}</b>`
+    
+  ctx.replyWithHTML(greetings);
+}
+
 
 // Command
 var handleGroupText = (ctx) => {
@@ -47,11 +65,22 @@ var handleGroupText = (ctx) => {
   
   switch (message) {
     case "!rules":
+      
       ctx.reply('Aturan masih dibikin 😅')
       break;
       
     case "!ping":
+      
       ctx.reply('Pong !')
+      break
+      
+    case "!members":
+      ctx.getChatMembersCount()
+        .then((data)=>{
+          console.log(data)
+          ctx.reply(`Jumlah Anggota: ${data}`)
+        })
+      
       break
       
     default:
