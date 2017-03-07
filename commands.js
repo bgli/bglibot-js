@@ -25,6 +25,7 @@ var commands = {
         } else if (ctx.updateType == 'inline_query') {
 
             console.log('Inline query :D')
+            console.log(ctx)
 
         }
 
@@ -107,7 +108,12 @@ var commands = {
                 if(ctx.message.reply_to_message != null){
                   
                   let idToReply = ctx.message.reply_to_message.message_id
-                  ctx.replyWithMarkdown('Siap! Terimakasih laporanya',{'reply_to_message_id':idToReply})
+                  ctx.replyWithMarkdown('*Siap!* \nTerimakasih laporanya 👮 ',{'reply_to_message_id':idToReply})
+                  ctx.telegram.sendMessage(
+                    '-1001102321498', // Admin BGLI Group
+                    `👮 <b>Laporan Post !</b>\n\nReport by: <b>${ctx.message.from.first_name}</b>\nMessage : <a href="https://t.me/${ctx.chat.username}/${idToReply}">Reported Message</a>`,
+                    {'parse_mode':'HTML'}
+                  )
                   
                 }
             
