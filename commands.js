@@ -58,29 +58,62 @@ var commands = {
     },
 
     handleGroupText(ctx) {
+        console.log(ctx.update)
 
         let message = ctx.message.text
 
         switch (message) {
             case "!rules":
 
-                ctx.reply('Aturan masih dibikin 😅')
+                ctx.replyWithHTML(
+                  '<b>Peraturan</b>\n\nBaca: <a href="http://telegra.ph/Peraturan-BGLI-03-07">Peraturan Group BGLI</a>',
+                  {'reply_to_message_id':ctx.message.message_id}
+                )
+            
                 break;
 
             case "!ping":
-
-                ctx.reply('Pong !')
+            
+                ctx.replyWithMarkdown('*Pong!!!*',{'reply_to_message_id':ctx.message.message_id})
+            
                 break
+                
+            case "!source":
+                ctx.replyWithHTML('Bantuin donk biar aku jadi pinter, buka repo github ini <a href="https://github.com/bgli/bglibot-js">bgli/bglibot-js</a>')
+                break;
 
             case "!members":
 
                 ctx.getChatMembersCount()
                     .then((data) => {
-                        ctx.reply(`Jumlah Anggota: ${data}`)
+                        ctx.replyWithMarkdown(`*Jumlah Anggota*: ${data}`,{'reply_to_message_id':ctx.message.message_id})
                     })
 
                 break
-
+                
+            case "!ss":
+                
+                if(ctx.message.reply_to_message != null){
+                  
+                  let idToReply = ctx.message.reply_to_message.message_id
+                  ctx.replyWithMarkdown('Kirimkan _Screenshot_ biar lebih jelas gan!',{'reply_to_message_id':idToReply})
+                  
+                }
+            
+                break
+          
+            case "!report":
+                
+                if(ctx.message.reply_to_message != null){
+                  
+                  let idToReply = ctx.message.reply_to_message.message_id
+                  ctx.replyWithMarkdown('Siap! Terimakasih laporanya',{'reply_to_message_id':idToReply})
+                  
+                }
+            
+                break
+            
+            
             default:
                 break;
 
@@ -89,7 +122,7 @@ var commands = {
     },
 
     handlePrivate(ctx) {
-        ctx.replyWithHTML('Bantuin donk biar aku jadi pinter, buka repo github ini <a href="https://github.com/bgli/aliando">bgli/aliando</a>')
+        ctx.replyWithHTML('Tidak menerima Pesan Pribadi untuk saat ini, <b>Maaf yaa!</b>')
     }
 
 }
