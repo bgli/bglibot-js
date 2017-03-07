@@ -3,7 +3,7 @@ const commands = require('./commands')
 
 const bot = new Telegraf(process.env.TOKEN)
 
-bot.telegram.setWebhook('https://aliando.gomix.me/webhook')
+bot.telegram.setWebhook('https://bglibot.gomix.me/webhook')
 
 
 
