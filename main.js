@@ -20,4 +20,6 @@ app.post('/webhook', (request, response) => {
 })
 
 
-var listener = app.listen(3000)
+var listener = app.listen(3000, ()=>{
+  console.log('Running...')
+})

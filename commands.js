@@ -33,7 +33,7 @@ var commands = {
 
     handleTextMessage(ctx) {
 
-        console.log(`${ctx.message.chat.title} : @ ${ctx.from.first_name} => ${ctx.message.text}`)
+        console.log(`${ctx.message.chat.title ? ctx.message.chat.title : 'private'} : @ ${ctx.from.first_name} => ${ctx.message.text}`)
 
         if (ctx.chat.type == 'group' || ctx.chat.type == 'supergroup') {
 
@@ -59,7 +59,7 @@ var commands = {
     },
 
     handleGroupText(ctx) {
-        console.log(ctx.update)
+        //console.log(ctx.update)
 
         let message = ctx.message.text
 
@@ -84,6 +84,8 @@ var commands = {
                 break;
 
             case "!members":
+            
+                ctx.telegram.sendChatAction(ctx.chat.id,'typing')
 
                 ctx.getChatMembersCount()
                     .then((data) => {
@@ -128,7 +130,7 @@ var commands = {
     },
 
     handlePrivate(ctx) {
-        ctx.replyWithHTML('Tidak menerima Pesan Pribadi untuk saat ini, <b>Maaf yaa!</b>')
+        //return ctx.replyWithHTML('Tidak menerima Pesan Pribadi untuk saat ini, <b>Maaf yaa!</b>')
     }
 
 }

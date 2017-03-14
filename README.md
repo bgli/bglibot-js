@@ -1,4 +1,4 @@
-Aliando Telegram Bot 
+BGLI Telegram Bot 
 =========================
 
 This bot is hosted on [Gomix](https://gomix.com/about)
