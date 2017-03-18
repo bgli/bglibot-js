@@ -33,7 +33,7 @@ var commands = {
 
     handleTextMessage(ctx) {
 
-        console.log(`${ctx.message.chat.title} : @ ${ctx.from.first_name} => ${ctx.message.text}`)
+        console.log(`${ctx.message.chat.title ? ctx.message.chat.title : 'private'} : @ ${ctx.from.first_name} => ${ctx.message.text}`)
 
         if (ctx.chat.type == 'group' || ctx.chat.type == 'supergroup') {
 
@@ -51,15 +51,13 @@ var commands = {
 
         let member = ctx.message.new_chat_member
         let group = ctx.chat
-
-        let greetings = `Halo <b>${member.first_name}</b>!\n\nSelamat datang  di Group <b>${group.title}</b>`
-
-        ctx.replyWithHTML(greetings)
+        
+        ctx.replyWithHTML(`Selamat datang gan ${member.first_name} 😊`)
 
     },
 
     handleGroupText(ctx) {
-        console.log(ctx.update)
+        //console.log(ctx.update)
 
         let message = ctx.message.text
 
@@ -67,7 +65,7 @@ var commands = {
             case "!rules":
 
                 ctx.replyWithHTML(
-                  '<b>Peraturan</b>\n\nBaca: <a href="http://telegra.ph/Peraturan-BGLI-03-07">Peraturan Group BGLI</a>',
+                  '<b>Peraturan</b>\n\nBaca: <a href="http://telegra.ph/Peraturan-BGLI-03-07">Peraturan Grup BGLI</a>',
                   {'reply_to_message_id':ctx.message.message_id}
                 )
             
@@ -75,7 +73,7 @@ var commands = {
 
             case "!ping":
             
-                ctx.replyWithMarkdown('*Pong!!!*',{'reply_to_message_id':ctx.message.message_id})
+                ctx.replyWithMarkdown('*Pong!!!* 🙄',{'reply_to_message_id':ctx.message.message_id})
             
                 break
                 
@@ -84,6 +82,8 @@ var commands = {
                 break;
 
             case "!members":
+            
+                ctx.telegram.sendChatAction(ctx.chat.id,'typing')
 
                 ctx.getChatMembersCount()
                     .then((data) => {
@@ -105,20 +105,46 @@ var commands = {
           
             case "!report":
                 
-                if(ctx.message.reply_to_message != null){
+                if(ctx.message.reply_to_message){
                   
                   let idToReply = ctx.message.reply_to_message.message_id
-                  ctx.replyWithMarkdown('*Siap!* \nTerimakasih laporanya 👮 ',{'reply_to_message_id':idToReply})
+                  ctx.replyWithMarkdown('👮 Terimakasih laporanya 👮 ',{'reply_to_message_id':idToReply})
                   ctx.telegram.sendMessage(
                     '-1001102321498', // Admin BGLI Group
                     `👮 <b>Laporan Post !</b>\n\nReport by: <b>${ctx.message.from.first_name}</b>\nMessage : <a href="https://t.me/${ctx.chat.username}/${idToReply}">Reported Message</a>`,
                     {'parse_mode':'HTML'}
                   )
                   
+                }else{
+                  ctx.replyWithMarkdown('Post mana yang mau dilaporkan? 😕')
                 }
             
                 break
             
+            case "!simpan":
+                            
+                console.log(ctx.message)
+            
+                if(ctx.message.reply_to_message){
+                  
+                  let message = ctx.message.reply_to_message
+                  
+                  if(message.text){
+                    let bookmark = "#bookmark\n"
+                    
+                    bookmark += `<b>${message.from.first_name} ${message.from.last_name || '' }</b> (${'@'+message.from.username || '<i>no_username</i>'}): `
+                    bookmark += message.text
+                    bookmark += "\n\n"
+                    bookmark += `<b>Pelaku: ${ctx.message.from.first_name}</b>\n`
+                    bookmark += `<b>Link:</b> <a href="https://t.me/GNULinuxIndonesia/${message.message_id}">Lihat</a>`
+                    
+                    ctx.telegram.sendMessage('@BGLIArsip',bookmark,{parse_mode:'HTML'})
+                    
+                    ctx.replyWithMarkdown('Sip, #bookmark sudah diarsipkan 💾\nCheck [disini](https://t.me/BGLIArsip)',{'reply_to_message_id':ctx.message.message_id})
+                  }
+                }
+            
+                break
             
             default:
                 break;
@@ -128,7 +154,7 @@ var commands = {
     },
 
     handlePrivate(ctx) {
-        ctx.replyWithHTML('Tidak menerima Pesan Pribadi untuk saat ini, <b>Maaf yaa!</b>')
+        //return ctx.replyWithHTML('Tidak menerima Pesan Pribadi untuk saat ini, <b>Maaf yaa!</b>')
     }
 
 }
