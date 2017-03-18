@@ -18,7 +18,7 @@ bot.on('message', (ctx, next) => {
   
 })
 
-bot.use(wit.middleware())
+//bot.use(wit.middleware())
 
 // wit.on('message',(ctx)=>{
   
