@@ -1,4 +1,20 @@
+const config = require('./config');
+
 var commands = {
+  
+    pawang : [
+      17648054, // Sucipto  
+    ],
+  
+    manualSource : [
+      -1001085483555, // Control Test
+      -1001034868528, // BGLI
+      -1001084078003 // GIMPSCAPE Testing
+    ],
+  
+    controlGroup : [
+      -1001085483555
+    ],
 
     handleMessage(ctx) {
 
@@ -52,7 +68,7 @@ var commands = {
         let member = ctx.message.new_chat_member
         let group = ctx.chat
         
-        ctx.replyWithHTML(`Selamat datang gan ${member.first_name} 😊`)
+        ctx.replyWithHTML(`Selamat datang ${member.first_name} 😊`)
 
     },
 
@@ -78,7 +94,7 @@ var commands = {
                 break
                 
             case "!source":
-                ctx.replyWithHTML('Bantuin donk biar aku jadi pinter, buka repo github ini <a href="https://github.com/bgli/bglibot-js">bgli/bglibot-js</a>')
+                ctx.replyWithHTML('Kepoin kita dong sist, buka repo github ini <a href="https://github.com/bgli/bglibot-js">bgli/bglibot-js</a>')
                 break;
 
             case "!members":
@@ -135,7 +151,7 @@ var commands = {
                     bookmark += `<b>${message.from.first_name} ${message.from.last_name || '' }</b> (${'@'+message.from.username || '<i>no_username</i>'}): `
                     bookmark += message.text
                     bookmark += "\n\n"
-                    bookmark += `<b>Pelaku: ${ctx.message.from.first_name}</b>\n`
+                    //bookmark += `<b>Pelaku: ${ctx.message.from.first_name}</b>\n`
                     bookmark += `<b>Link:</b> <a href="https://t.me/GNULinuxIndonesia/${message.message_id}">Lihat</a>`
                     
                     ctx.telegram.sendMessage('@BGLIArsip',bookmark,{parse_mode:'HTML'})
@@ -147,6 +163,7 @@ var commands = {
                 break
             
             default:
+                this.handleManual(ctx);
                 break;
 
         }
@@ -155,7 +172,69 @@ var commands = {
 
     handlePrivate(ctx) {
         //return ctx.replyWithHTML('Tidak menerima Pesan Pribadi untuk saat ini, <b>Maaf yaa!</b>')
+    },
+  
+    handleManual(ctx){
+      
+        //console.log(ctx.message)
+        
+        let isAdmin = false
+      
+        // Only Allow from list Manual Group
+        if(this.manualSource.indexOf(ctx.message.chat.id) == -1){
+          console.log("Bukan dari group whitelist manual, Skip!")
+          return
+        }
+      
+        // Only allow mimin
+        if(this.pawang.indexOf(ctx.message.from.id) == -1){
+          console.log("Non pawang 🙄")
+        }else{
+          isAdmin = true
+        }
+        
+        
+        let message = ctx.message.text
+        
+        // Control your bot 😼
+        if(config.manual){
+          
+          if(isAdmin && message == '!auto' && this.controlGroup.indexOf(ctx.message.chat.id) > -1){
+            
+            ctx.reply("Autopilot : ON")
+            
+            config.manual = false
+            config.save()
+            return
+            
+          }
+          
+          // Forward to control group
+          if(this.controlGroup.indexOf(ctx.message.chat.id) == -1){
+            ctx.telegram.sendMessage('-1001085483555', `${ctx.message.from.first_name} : ${ctx.message.text}`)
+          }
+          
+          // If pawang send reply to group 
+          if(isAdmin && this.controlGroup.indexOf(ctx.message.chat.id) > -1){
+            ctx.telegram.sendMessage('-1001034868528', ctx.message.text)
+          }
+          
+        }else{
+          
+          if(isAdmin && message == '!manual' && this.controlGroup.indexOf(ctx.message.chat.id) > -1){
+            ctx.reply('Autopilot : OFF')
+            
+            config.manual = true
+            config.save()
+          }
+          
+        }
+      
+        console.log(`Manual mode? ${config.manual}`)
+        
+        //ctx.telegram.sendMessage('-1001085483555', `From: ${ctx.chat.title}\nMsg ID:${ctx.message.message_id}\nMessage: ${ctx.message.text}`)
     }
+
 
 }
 
