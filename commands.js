@@ -1,4 +1,6 @@
 const config = require('./config');
+const fs = require('fs')
+const moment = require('moment-timezone')
 
 var commands = {
   
@@ -10,6 +12,10 @@ var commands = {
       -1001085483555, // Control Test
       -1001034868528, // BGLI
       -1001084078003 // GIMPSCAPE Testing
+    ],
+  
+    rumahMiranda : [
+      -1001034868528, // BGLI
     ],
   
     controlGroup : [
@@ -33,7 +39,7 @@ var commands = {
                     break
 
                 case 'left_chat_member':
-                    console.log(ctx)
+                    console.log(ctx.message)
                     break
 
             }
@@ -73,9 +79,22 @@ var commands = {
     },
 
     handleGroupText(ctx) {
-        //console.log(ctx.update)
+        //console.log(ctx.message)
 
         let message = ctx.message.text
+        
+        // Filtering Group
+        if(this.rumahMiranda.indexOf(ctx.message.chat.id) == -1){
+          
+          // Command list that only work for known group
+          let commandList = ['!rules','!report','!kulgram','!simpan']
+          
+          if(commandList.indexOf(ctx.message.text) != -1){
+            ctx.replyWithHTML('Aku lagi dimana ini? 😰\n<b>#diculik</b>')
+            return
+          }
+          
+        }
 
         switch (message) {
             case "!rules":
@@ -118,8 +137,49 @@ var commands = {
                 }
             
                 break
+                
+            case "!kulgram":
+                
+                // Only allow mimin
+                let isAdmin = false
+                
+                if(this.pawang.indexOf(ctx.message.from.id) == -1){
+                  console.log("Non pawang 🙄")
+                  isAdmin = false
+                }else{
+                  isAdmin = true
+                }
+                
+                if(isAdmin){
+                  
+                  if(ctx.session.kuliah){
+                    ctx.session.kuliah = false
+                    ctx.reply("#kulgram selesai 😇")
+                    
+                    let fileName = `./storage/kulgram-${moment().tz("Asia/Jakarta").format('YYYYMMDD')}.txt`
+                    
+                    fs.open(fileName, "r", function(error, data) {
+                      console.log(data);
+                      
+                      //ctx.telegram.sendDocument(ctx.message.chat.id,data)
+                      
+                    });
+                    
+                  }else{
+                    ctx.session.kuliah = true
+                    ctx.reply("#kulgram dimulai, yay 🤷‍")
+                  }
+                  
+                }else{
+                  ctx.reply("Kuliah libur 😋")
+                }
+                    
+            
+                break;
           
             case "!report":
+            
+                console.log(ctx.message)
                 
                 if(ctx.message.reply_to_message){
                   
@@ -127,7 +187,7 @@ var commands = {
                   ctx.replyWithMarkdown('👮 Terimakasih laporanya 👮 ',{'reply_to_message_id':idToReply})
                   ctx.telegram.sendMessage(
                     '-1001102321498', // Admin BGLI Group
-                    `👮 <b>Laporan Post !</b>\n\nReport by: <b>${ctx.message.from.first_name}</b>\nMessage : <a href="https://t.me/${ctx.chat.username}/${idToReply}">Reported Message</a>`,
+                    `👮 <b>Laporan Post !</b>\n\n ${ctx.message.reply_to_message.from.first_name} : ${ctx.message.reply_to_message.text}\n\nReport by: <b>${ctx.message.from.first_name}</b>\nMessage : <a href="https://t.me/${ctx.chat.username}/${idToReply}">Reported Message</a>`,
                     {'parse_mode':'HTML'}
                   )
                   
@@ -139,7 +199,7 @@ var commands = {
             
             case "!simpan":
                             
-                console.log(ctx.message)
+                //console.log(ctx.message)
             
                 if(ctx.message.reply_to_message){
                   
@@ -164,6 +224,9 @@ var commands = {
             
             default:
                 this.handleManual(ctx);
+                
+                // Logger
+                this.handleLogger(ctx);
                 break;
 
         }
@@ -182,13 +245,13 @@ var commands = {
       
         // Only Allow from list Manual Group
         if(this.manualSource.indexOf(ctx.message.chat.id) == -1){
-          console.log("Bukan dari group whitelist manual, Skip!")
+          //console.log("Bukan dari group whitelist manual, Skip!")
           return
         }
       
         // Only allow mimin
         if(this.pawang.indexOf(ctx.message.from.id) == -1){
-          console.log("Non pawang 🙄")
+          //console.log("Non pawang 🙄")
         }else{
           isAdmin = true
         }
@@ -230,9 +293,30 @@ var commands = {
           
         }
       
-        console.log(`Manual mode? ${config.manual}`)
+        //console.log(`Manual mode? ${config.manual}`)
+        //console.log(`Kuliah mode? ${ctx.session.kuliah}`)
         
         //ctx.telegram.sendMessage('-1001085483555', `From: ${ctx.chat.title}\nMsg ID:${ctx.message.message_id}\nMessage: ${ctx.message.text}`)
+    },
+  
+    handleLogger(ctx){
+      if(ctx.session.kuliah){
+        
+        //console.log(ctx.message)
+        
+        let fileName = `./storage/kulgram-${moment().tz("Asia/Jakarta").format('YYYYMMDD')}.txt`
+        let logMessage = `${moment.unix(ctx.message.date).tz("Asia/Jakarta").format('YY-MM-DD hh:mm:ss')}: ${ctx.message.from.first_name} > ${ctx.message.text}\n`
+        
+        console.log(logMessage)
+        
+        fs.appendFile(fileName, logMessage, function (err) {
+          if (err) throw err;
+          console.log('Log Saved!');
+        });
+        
+      }else{
+        //console.log('LOGER: Sedang tidak kuliah')
+      }
     }
 
 
