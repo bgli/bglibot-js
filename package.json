@@ -12,7 +12,8 @@
     "telegraf": "^3.6.7",
     "telegraf-wit": "^2.1.0",
     "moment": "^2.18.1",
-    "moment-timezone": "^0.5.13"
+    "moment-timezone": "^0.5.13",
+    "firebase": "^3.8.0"
   },
   "engines": {
     "node": "6.9.x"

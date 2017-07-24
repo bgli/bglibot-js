@@ -1,6 +1,7 @@
 const Telegraf = require('telegraf')
 const TelegrafWit = require('telegraf-wit')
 const commands = require('./commands')
+const firebase = require('./middleware/firebase')
 
 const bot = new Telegraf(process.env.TOKEN)
 const wit = new TelegrafWit(process.env.WIT)
@@ -9,6 +10,9 @@ bot.telegram.setWebhook('https://bglibot.glitch.me/webhook')
 
 
 bot.use(Telegraf.memorySession())
+
+// Firebase Middleware
+bot.use(firebase.middleware)
 
 // Handle Message
 bot.on('message', (ctx, next) => {

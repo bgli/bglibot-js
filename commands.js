@@ -1,6 +1,7 @@
 const config = require('./config');
 const fs = require('fs')
 const moment = require('moment-timezone')
+const firebase = require('./middleware/firebase')
 
 var commands = {
   
@@ -23,6 +24,8 @@ var commands = {
     ],
 
     handleMessage(ctx) {
+      
+        console.log(ctx)
 
         if (ctx.updateType == 'message') {
 
@@ -75,6 +78,10 @@ var commands = {
         let group = ctx.chat
         
         ctx.replyWithHTML(`Selamat datang ${member.first_name} 😊`)
+          .then((response)=>{
+              console.log(response)
+              firebase.logMessage(response)
+          })
 
     },
 
@@ -109,11 +116,19 @@ var commands = {
             case "!ping":
             
                 ctx.replyWithMarkdown('*Pong!!!* 🙄',{'reply_to_message_id':ctx.message.message_id})
+                  .then((response)=>{
+                    console.log(response)
+                    firebase.logMessage(response)
+                  })
             
                 break
                 
             case "!source":
                 ctx.replyWithHTML('Kepoin kita dong sist, buka repo github ini <a href="https://github.com/bgli/bglibot-js">bgli/bglibot-js</a>')
+                  .then((response)=>{
+                    console.log(response)
+                    firebase.logMessage(response)
+                  })
                 break;
 
             case "!members":
@@ -123,6 +138,10 @@ var commands = {
                 ctx.getChatMembersCount()
                     .then((data) => {
                         ctx.replyWithMarkdown(`*Jumlah Anggota*: ${data}`,{'reply_to_message_id':ctx.message.message_id})
+                          .then((response)=>{
+                            console.log(response)
+                            firebase.logMessage(response)
+                          })
                     })
 
                 break
@@ -133,6 +152,10 @@ var commands = {
                   
                   let idToReply = ctx.message.reply_to_message.message_id
                   ctx.replyWithMarkdown('Kirimkan _Screenshot_ biar lebih jelas gan!',{'reply_to_message_id':idToReply})
+                    .then((response)=>{
+                      console.log(response)
+                      firebase.logMessage(response)
+                    })
                   
                 }
             
@@ -179,20 +202,28 @@ var commands = {
           
             case "!report":
             
-                console.log(ctx.message)
+                //console.log(ctx.message)
                 
                 if(ctx.message.reply_to_message){
                   
                   let idToReply = ctx.message.reply_to_message.message_id
-                  ctx.replyWithMarkdown('👮 Terimakasih laporanya 👮 ',{'reply_to_message_id':idToReply})
+                  ctx.replyWithMarkdown('👮 Terimakasih laporannya 👮 ',{'reply_to_message_id':idToReply})
+                    .then((response)=>{
+                      console.log(response)
+                      firebase.logMessage(response)
+                    })
                   ctx.telegram.sendMessage(
                     '-1001102321498', // Admin BGLI Group
-                    `👮 <b>Laporan Post !</b>\n\n ${ctx.message.reply_to_message.from.first_name} : ${ctx.message.reply_to_message.text}\n\nReport by: <b>${ctx.message.from.first_name}</b>\nMessage : <a href="https://t.me/${ctx.chat.username}/${idToReply}">Reported Message</a>`,
+                    `👮 <b>Laporan Post !</b>\n\n ${ctx.message.reply_to_message.from.first_name} ${ctx.message.reply_to_message.from.username ? '(@'+ctx.message.reply_to_message.from.username+')':''} : ${ctx.message.reply_to_message.text}\n\nReport by: <b>${ctx.message.from.first_name}</b>\nMessage : <a href="https://t.me/${ctx.chat.username}/${idToReply}">Reported Message</a>`,
                     {'parse_mode':'HTML'}
                   )
                   
                 }else{
                   ctx.replyWithMarkdown('Post mana yang mau dilaporkan? 😕')
+                    .then((response)=>{
+                      console.log(response)
+                      firebase.logMessage(response)
+                    })
                 }
             
                 break
@@ -217,6 +248,10 @@ var commands = {
                     ctx.telegram.sendMessage('@BGLIArsip',bookmark,{parse_mode:'HTML'})
                     
                     ctx.replyWithMarkdown('Sip, #bookmark sudah diarsipkan 💾\nCheck [disini](https://t.me/BGLIArsip)',{'reply_to_message_id':ctx.message.message_id})
+                      .then((response)=>{
+                        console.log(response)
+                        firebase.logMessage(response)
+                      })
                   }
                 }
             
@@ -235,6 +270,7 @@ var commands = {
 
     handlePrivate(ctx) {
         //return ctx.replyWithHTML('Tidak menerima Pesan Pribadi untuk saat ini, <b>Maaf yaa!</b>')
+      
     },
   
     handleManual(ctx){
